@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#06071a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="SENAKA">
+  <meta name="description" content="SENAKA GROUP — Operations & Finance Intelligence Dashboard">
+  <title>SENAKA GROUP — Operations Dashboard</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="icon" href="icon-192.png">
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    .dtable th,
+    .dtable td {
+      border-right: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .dtable th:last-child,
+    .dtable td:last-child {
+      border-right: none;
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+
+<!-- ═══ SPLASH ═══ -->
+<div id="splash">
+  <div class="splash-inner">
+    <div class="splash-ring-wrap">
+      <svg class="splash-svg" viewBox="0 0 120 120" width="120" height="120">
+        <circle class="splash-circle-bg" cx="60" cy="60" r="52"/>
+        <circle class="splash-circle-fill" id="splash-circle" cx="60" cy="60" r="52"/>
+      </svg>
+      <img src="icon-512.png" alt="SENAKA GROUP" class="splash-logo-img">
+    </div>
+    <div class="splash-brand">SENAKA GROUP</div>
+    <div class="splash-pct-display"><span id="splash-pct">0</span><span class="splash-pct-sym">%</span> <span class="splash-loaded-txt">LOADED</span></div>
+    <div class="splash-os-tag">SENAKA OS · AI Engine v3.2 · Release 2026.05</div>
+    <div class="splash-terminal" id="splash-terminal">&nbsp;</div>
+    <div class="splash-credits">SYSTEM ENGINEERING — KUSAL · NADEESHANI</div>
+  </div>
+</div>
+
+<!-- ═══ LOGIN ═══ -->
+<div id="login-screen" class="hidden">
+  <div class="login-inner">
+    <div class="login-logo-wrap">
+      <div class="login-ring login-ring-1"></div>
+      <div class="login-ring login-ring-2"></div>
+      <img src="icon-512.png" alt="SENAKA GROUP" class="login-logo-img">
+    </div>
+    <div class="login-brand">SENAKA GROUP</div>
+    <div class="login-tagline">Operations &amp; Finance Intelligence</div>
+    <div class="login-dev-credit">SENAKA OS · AI Engine v3.2 · Release 2026.05</div>
+    <div class="login-card">
+      <div class="login-card-title">Welcome Back</div>
+      <div class="login-card-sub">Sign in to access your dashboard</div>
+      <div class="login-field-wrap">
+        <label class="login-label" for="login-user">Username</label>
+        <input type="text" id="login-user" class="login-input" placeholder="Enter your name"
+               autocomplete="username" spellcheck="false" autocorrect="off" autocapitalize="off">
+      </div>
+      <div class="login-field-wrap">
+        <label class="login-label" for="login-pass">Password</label>
+        <input type="password" id="login-pass" class="login-input" placeholder="••••••••"
+               autocomplete="current-password">
+      </div>
+      <div id="login-error" class="login-error hidden">⚠ Invalid username or password</div>
+      <button id="login-btn" class="login-submit-btn">Sign In →</button>
+    </div>
+    <div class="login-ver">SENAKA OS v3.2 · SENAKA GROUP © 2026</div>
+  </div>
+</div>
+
+<!-- ═══ APP ═══ -->
+<div id="app" class="hidden">
+
+  <!-- SIDEBAR -->
+  <aside id="sidebar" class="sidebar-open">
+    <div class="sb-header">
+      <div class="sb-logo">
+        <img src="icon-192.png" alt="logo" class="sb-icon">
+        <div class="sb-brand-text">
+          <span class="sb-name">SENAKA GROUP</span>
+          <span class="sb-tagline">Operations Hub</span>
+        </div>
+      </div>
+    </div>
+
+    <nav class="sb-nav">
+      <div class="sb-section-label">FINANCIAL</div>
+      <a class="nav-item active" data-page="bank" href="#bank">
+        <span class="nav-ico">🏦</span><span class="nav-lbl">Bank Position</span>
+        <span class="nav-badge" id="nb-bank"></span>
+      </a>
+      <a class="nav-item" data-page="cash" href="#cash">
+        <span class="nav-ico">💵</span><span class="nav-lbl">Cash in Hand</span>
+        <span class="nav-badge" id="nb-cash"></span>
+      </a>
+      <a class="nav-item" data-page="invoices" href="#invoices">
+        <span class="nav-ico">📋</span><span class="nav-lbl">Invoice Receivables</span>
+        <span class="nav-badge" id="nb-invoices"></span>
+      </a>
+      <a class="nav-item" data-page="finance" href="#finance">
+        <span class="nav-ico">🏛️</span><span class="nav-lbl">Finance Liability</span>
+        <span class="nav-badge" id="nb-finance"></span>
+      </a>
+      <div class="sb-section-label">OPERATIONS</div>
+      <a class="nav-item" data-page="tender" href="#tender">
+        <span class="nav-ico">🏗️</span><span class="nav-lbl">PS Pole Production</span>
+        <span class="nav-badge" id="nb-tender"></span>
+      </a>
+      <a class="nav-item" data-page="sleepers" href="#sleepers">
+        <span class="nav-ico">🛤️</span><span class="nav-lbl">Sleepers Production</span>
+        <span class="nav-badge" id="nb-sleepers"></span>
+      </a>
+      <a class="nav-item" data-page="vehicle" href="#vehicle">
+        <span class="nav-ico">🚛</span><span class="nav-lbl">Vehicle Fleet</span>
+        <span class="nav-badge" id="nb-vehicle"></span>
+      </a>
+      <a class="nav-item" data-page="filling" href="#filling">
+        <span class="nav-ico">⛽</span><span class="nav-lbl">Filling Station</span>
+        <span class="nav-badge" id="nb-filling"></span>
+      </a>
+    </nav>
+
+    <div class="sb-footer">
+      <div class="sb-fresh-title">DATA FRESHNESS</div>
+      <div id="freshness-panel" class="freshness-panel">
+        <div class="fresh-item"><span class="fi-dot dot-gray"></span><span class="fi-name">Loading…</span></div>
+      </div>
+      <div class="sb-meta">
+        <div id="sb-user-name" class="sb-user-name"></div>
+        <button id="logout-btn" class="logout-btn">⏻ Sign Out</button>
+        <div class="sb-owner">SYSTEM ENGINEERING — KUSAL · NADEESHANI</div>
+        <div id="sb-refreshed" class="sb-refreshed">Not yet refreshed</div>
+        <div class="sb-version">SENAKA OS v3.2 · 2026</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN WRAP -->
+  <div id="main-wrap">
+    <header id="topbar">
+      <button id="menu-btn" class="icon-btn" title="Toggle menu">☰</button>
+      <div id="topbar-title">🏦 Bank Position</div>
+      <div class="topbar-right">
+        <div id="topbar-clock" class="topbar-clock"></div>
+        <div id="topbar-date" class="topbar-date"></div>
+        <button id="mobile-logout-btn" class="icon-btn" title="Sign Out">⏻ <span class="mob-logout-label">Sign Out</span></button>
+        <button id="refresh-btn" class="icon-btn" title="Refresh data">↻</button>
+      </div>
+    </header>
+
+    <main id="page-wrap">
+
+      <!-- ─── PAGE 1: BANK POSITION ─── -->
+      <section id="pg-bank" class="page-section page-active">
+        <div class="pg-header">
+          <div>
+            <h2 class="pg-title">🏦 Bank Position</h2>
+            <p class="pg-sub">Live balances across all banking institutions &nbsp;·&nbsp; <span class="freshness-tag" id="fresh-bank">Checking…</span> &nbsp;·&nbsp; <span class="data-owner">👤 Data: Sanduni</span></p>
+          </div>
+          <span class="stale-pill hidden" id="stale-bank">⚠ Stale data detected</span>
+        </div>
+        <div class="filter-bar">
+          <label>Company:
+            <select id="bank-company-sel" class="filter-sel">
+              <option value="">All Companies</option>
+            </select>
+          </label>
+        </div>
+        <div class="kpi-row" id="bank-kpis"></div>
+        <div class="charts-row">
+          <div class="chart-card" style="flex:1.5">
+            <div class="chart-card-hdr"><div class="chart-card-hdr-row"><div><div class="chart-card-title">Account Balances</div><div class="chart-card-sub">Sorted by balance · Dot = one account · Red = overdrawn / unfavorable</div></div><button class="chart-zoom-btn" data-chart="bank-bar" title="Expand chart">⤢ <span class="zoom-label">Zoom</span></button></div></div>
+            <div class="chart-box" id="bank-bar-box" style="max-height:280px"><canvas id="bank-bar"></canvas></div>
+          </div>
+          <div class="chart-card" style="flex:0.7">
+            <div class="chart-card-hdr"><div class="chart-card-title">Bank Distribution</div><div class="chart-card-sub">By institution</div></div>
+            <div class="chart-box" style="height:340px"><canvas id="bank-donut"></canvas></div>
+          </div>
+        </div>
+        <div class="charts-row">
+          <div class="chart-card" style="flex:0.6">
+            <div class="chart-card-hdr"><div class="chart-card-title">Net Position</div><div class="chart-card-sub">Assets vs liabilities</div></div>
+            <div class="chart-box" style="height:220px"><canvas id="bank-gauge"></canvas></div>
+          </div>
+          <div class="chart-card" style="flex:1.4">
+            <div class="chart-card-hdr"><div class="chart-card-title">Portfolio by Bank Group</div><div class="chart-card-sub">Stacked — credit vs debit</div></div>
+            <div class="chart-box" style="height:220px"><canvas id="bank-stacked"></canvas></div>
+          </div>
+        </div>
+        <div class="table-card">
+          <div class="table-card-hdr">
+            <div class="chart-card-title">Account Details</div>
+            <div class="tbl-hdr-right">
+              <span class="tbl-count" id="bank-count"></span>
+              <input class="tbl-search" id="bank-search" placeholder="Search accounts…">
+            </div>
+          </div>
+          <div class="tbl-wrap"><table id="bank-tbl" class="dtable"><thead><tr>
+            <th data-col="Bank Name">Bank Name</th>
+            <th data-col="Account Number">Account No</th>
+            <th data-col="Account Type">Type</th>
+            <th data-col="Amount" class="num">Balance (LKR)</th>
+            <th data-col="Last Updated">Last Updated</th>
+            <th>Freshness</th>
+          </tr></thead><tbody id="bank-tbody"></tbody></table></div>
+        </div>
+      </section>
+
+      <!-- ─── PAGE 2: CASH IN HAND ─── -->
+      <section id="pg-cash" class="page-section hidden">
+        <div class="pg-header">
+          <div>
+            <h2 class="pg-title">💵 Cash in Hand</h2>
+            <p class="pg-sub">Current cash float positions &nbsp;·&nbsp; <span class="freshness-tag" id="fresh-cash">Checking…</span> &nbsp;·&nbsp; <span class="data-owner">👤 Data: Shamini · Kasuni · Ashan · Pradeepa · Deshani</span></p>
+          </div>
+          <span class="stale-pill hidden" id="stale-cash">⚠ Stale data</span>
+        </div>
+        <div class="kpi-row" id="cash-kpis"></div>
+        <div class="charts-row">
+          <div class="chart-card" style="flex:1.5">
+            <div class="chart-card-hdr"><div class="chart-card-title">Cash by Location</div><div class="chart-card-sub">Float balances ranked</div></div>
+            <div class="chart-box" style="height:280px"><canvas id="cash-bar"></canvas></div>
+          </div>
+          <div class="chart-card" style="flex:0.7">
+            <div class="chart-card-hdr"><div class="chart-card-title">Distribution</div><div class="chart-card-sub">Share of total</div></div>
+            <div class="chart-box" style="height:280px"><canvas id="cash-donut"></canvas></div>
+          </div>
+        </div>
+        <div class="table-card">
+          <div class="table-card-hdr">
+            <div class="chart-card-title">Float Details</div>
+            <div class="tbl-hdr-right">
+              <span class="tbl-count" id="cash-count"></span>
+              <input class="tbl-search" id="cash-search" placeholder="Search floats…">
+            </div>
+          </div>
+          <div class="tbl-wrap"><table id="cash-tbl" class="dtable"><thead><tr>
+            <th data-col="Cash Float Name">Cash Float Name</th>
+            <th data-col="Amount" class="num">Amount (LKR)</th>
+            <th data-col="Last Updated">Last Updated</th>
+            <th>Freshness</th>
+          </tr></thead><tbody id="cash-tbody"></tbody></table></div>
+        </div>
+      </section>
+
+      <!-- ─── PAGE 3: INVOICE RECEIVABLES ─── -->
+      <section id="pg-invoices" class="page-section hidden">
+        <div class="pg-header">
+          <div>
+            <h2 class="pg-title">📋 Invoice Receivables</h2>
+            <p class="pg-sub">Monthly invoices · Pending &amp; received analysis · Collection tracking &nbsp;·&nbsp; <span class="freshness-tag" id="fresh-invoices">Checking…</span> &nbsp;·&nbsp; <span class="data-owner">👤 Data: Thilini</span></p>
+          </div>
+          <span class="stale-pill hidden" id="stale-invoices">⚠ Stale data</span>
+        </div>
+        <div class="filter-bar">
+          <label>Company:
+            <select id="inv-company-sel" class="filter-sel">
+              <option value="">All Companies</option>
+            </select>
+          </label>
+        </div>
+        <div class="kpi-row" id="inv-kpis"></div>
+        <div class="charts-row">
+          <div class="chart-card" style="flex:1">
+            <div class="chart-card-hdr"><div class="chart-card-title">Pending Age Analysis</div><div class="chart-card-sub">Pending invoices by ageing bucket</div></div>
+            <div class="chart-box" style="height:260px"><canvas id="inv-age"></canvas></div>
+          </div>
+          <div class="chart-card" style="flex:1">
+            <div class="chart-card-hdr"><div class="chart-card-title">Pending by Client</div><div class="chart-card-sub">Outstanding pending per client reference</div></div>
+            <div class="chart-box" style="height:260px"><canvas id="inv-client"></canvas></div>
+          </div>
+        </div>
+        <div class="charts-row">
+          <div class="chart-card" style="flex:1.3">
+            <div class="chart-card-hdr"><div class="chart-card-title">Received vs Pending by Client</div><div class="chart-card-sub">Collection performance per client</div></div>
+            <div class="chart-box" style="height:230px"><canvas id="inv-scatter"></canvas></div>
+          </div>
+          <div class="chart-card" style="flex:0.7">
+            <div class="chart-card-hdr"><div class="chart-card-title">Collection Summary</div><div class="chart-card-sub">Received vs pending split by value</div></div>
+            <div class="chart-box" style="height:230px"><canvas id="inv-status"></canvas></div>
+          </div>
+        </div>
+        <div class="table-card">
+          <div class="table-card-hdr">
+            <div class="chart-card-title">Invoice Details</div>
+            <div class="tbl-hdr-right">
+              <span class="tbl-count" id="inv-count"></span>
+              <input class="tbl-search" id="inv-search" placeholder="Search invoices…">
+            </div>
+          </div>
+          <div class="tbl-wrap"><table id="inv-tbl" class="dtable dtable-expand"><thead><tr>
+            <th></th>
+            <th data-col="Invoice Number">Invoice No</th>
+            <th data-col="Invoice Date">Date</th>
+            <th data-col="Invoice Amount" class="num">Amount (LKR)</th>
+            <th data-col="Age Days" class="num">Age (days)</th>
+            <th data-col="Client Ref">Client Ref</th>
+            <th data-col="Received Date">Received</th>
+            <th>Status</th>
+          </tr></thead><tbody id="inv-tbody"></tbody></table></div>
+        </div>
+      </section>
+
+      <!-- ─── PAGE 4: FINANCE LIABILITY ─── -->
+      <section id="pg-finance" class="page-section hidden">
+        <div class="pg-header">
+          <div>
+            <h2 class="pg-title">🏛️ Finance Liability</h2>
+            <p class="pg-sub">Loan obligations · Repayment progress &nbsp;·&nbsp; <span class="freshness-tag" id="fresh-finance">Checking…</span> &nbsp;·&nbsp; <span class="data-owner">👤 Data: Prasad</span></p>
+          </div>
+          <span class="stale-pill hidden" id="stale-finance">⚠ Stale data</span>
+        </div>
+
+        <div class="kpi-row" id="fin-kpis"></div>
+
+        <!-- ── Outstanding by Lender — FULL WIDTH with Bank Name dropdown ── -->
+        <div class="charts-row">
+          <div class="chart-card" style="flex:1">
+            <div class="chart-card-hdr">
+              <div class="chart-card-hdr-row">
+                <div>
+                  <div class="chart-card-title">Outstanding by Lender</div>
+                  <div class="chart-card-sub">Capital outstanding per institution</div>
+                </div>
+                <button class="chart-zoom-btn" data-chart="fin-bar" title="Expand chart">⤢ <span class="zoom-label">Zoom</span></button>
+              </div>
+              <!-- Bank Name filter dropdown -->
+              <div style="padding:.6rem 0 .1rem; display:flex; align-items:center; gap:.5rem; flex-wrap:wrap;">
+                <label style="font-size:.75rem; color:rgba(255,255,255,.45); white-space:nowrap;" for="fin-bank-filter">Bank Name:</label>
+                <select id="fin-bank-filter" class="filter-sel">
+                  <option value="">All Banks</option>
+                </select>
+              </div>
+            </div>
+            <div class="chart-box" style="height:320px"><canvas id="fin-bar"></canvas></div>
+          </div>
+        </div>
+
+        <!-- ── Monthly Obligations — FULL WIDTH ── -->
+        <div class="charts-row">
+          <div class="chart-card" style="flex:1">
+            <div class="chart-card-hdr">
+              <div class="chart-card-title">Monthly Obligations</div>
+              <div class="chart-card-sub">Instalment by loan type</div>
+            </div>
+            <div class="chart-box" style="height:220px"><canvas id="fin-monthly"></canvas></div>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <div class="table-card-hdr">
+            <div class="chart-card-title">Loan Portfolio</div>
+            <div class="tbl-hdr-right">
+              <span class="tbl-count" id="fin-count"></span>
+              <input class="tbl-search" id="fin-search" placeholder="Search loans…">
+            </div>
+          </div>
+          <div class="tbl-wrap"><table id="fin-tbl" class="dtable dtable-expand"><thead><tr>
+            <th></th>
+            <th data-col="Bank Name">Bank Name</th>
+            <th data-col="Loan Account No">Account No</th>
+            <th data-col="Loan Type">Type</th>
+            <th data-col="Loan Granted Amount" class="num">Granted (LKR)</th>
+            <th data-col="Capital Outstanding" class="num">Outstanding (LKR)</th>
+            <th data-col="Age Days" class="num">Age</th>
+            <th>Repaid</th>
+          </tr></thead><tbody id="fin-tbody"></tbody></table></div>
+        </div>
+      </section>
+
+      <!-- ─── PAGE 5: TENDER / PRODUCTION ─── -->
+      <section id="pg-tender" class="page-section hidden">
+        <div class="pg-header">
+          <div>
+            <h2 class="pg-title">🏗️ PS Pole Production</h2>
+            <p class="pg-sub">Contract status · Production tracking &nbsp;·&nbsp; <span class="freshness-tag" id="fresh-tender">Checking…</span> &nbsp;·&nbsp; <span class="data-owner">👤 Data: Dayani</span></p>
+          </div>
+          <span class="stale-pill hidden" id="stale-tender">⚠ Stale data</span>
+        </div>
+        <div class="filter-bar">
+          <label>Site:
+            <select id="tender-site" class="filter-sel">
+              <option value="">All Sites</option>
+            </select>
+          </label>
+          <label>Status:
+            <select id="tender-status" class="filter-sel">
+              <option value="">All Status</option>
+              <option value="On-Going">On-Going</option>
+              <option value="Completed">Completed</option>
+            </select>
+          </label>
+        </div>
+        <div class="kpi-row" id="tender-kpis"></div>
+        <div class="charts-row">
+          <div class="chart-card" style="flex:1.4">
+            <div class="chart-card-hdr"><div class="chart-card-title">Production Progress</div><div class="chart-card-sub">% complete by on-going tender</div></div>
+            <div class="chart-box" style="height:300px"><canvas id="tender-progress"></canvas></div>
+          </div>
+          <div class="chart-card" style="flex:0.8">
+            <div class="chart-card-hdr"><div class="chart-card-title">Distribution by Site</div><div class="chart-card-sub">Number of tenders per site</div></div>
+            <div class="chart-box" style="height:300px"><canvas id="tender-donut"></canvas></div>
+          </div>
+        </div>
+        <div class="charts-row">
+          <div class="chart-card">
+            <div class="chart-card-hdr"><div class="chart-card-title">Site Production Summary</div><div class="chart-card-sub">Total quantity comparison per site</div></div>
+            <div class="chart-box" style="height:250px"><canvas id="tender-radar"></canvas></div>
+          </div>
+        </div>
+        <div class="table-card">
+          <div class="table-card-hdr">
+            <div class="chart-card-title">Tender Register</div>
+            <div class="tbl-hdr-right">
+              <span class="tbl-count" id="tender-count"></span>
+              <input class="tbl-search" id="tender-search" placeholder="Search tenders…">
+            </div>
+          </div>
+          <div class="tbl-wrap"><table id="tender-tbl" class="dtable dtable-expand"><thead><tr>
+            <th></th>
+            <th data-col="Tender No">Tender No</th>
+            <th data-col="Site Name">Site</th>
+            <th data-col="Pole Type">Pole Type</th>
+            <th data-col="_tabStatus">Status</th>
+            <th>Progress</th>
+            <th data-col="Total Tender Qty" class="num">Total Qty</th>
+            <th data-col="Total Qty Casted" class="num">Casted</th>
+          </tr></thead><tbody id="tender-tbody"></tbody></table></div>
+        </div>
+      </section>
+
+      <!-- ─── PAGE 6: SLEEPERS PRODUCTION ─── -->
+      <section id="pg-sleepers" class="page-section hidden">
+        <div class="pg-header">
+          <div>
+            <h2 class="pg-title">🛤️ Sleepers Production</h2>
+            <p class="pg-sub">Contract status · Sleeper casting progress &nbsp;·&nbsp; <span class="freshness-tag" id="fresh-sleepers">Checking…</span> &nbsp;·&nbsp; <span class="data-owner">👤 Data: Thusitha</span></p>
+          </div>
+          <span class="stale-pill hidden" id="stale-sleepers">⚠ Stale data</span>
+        </div>
+        <div class="filter-bar">
+          <label>Site:
+            <select id="slp-site" class="filter-sel">
+              <option value="">All Sites</option>
+            </select>
+          </label>
+          <label>Status:
+            <select id="slp-status" class="filter-sel">
+              <option value="">All Status</option>
+              <option value="On-Going">On-Going</option>
+              <option value="Completed">Completed</option>
+            </select>
+          </label>
+        </div>
+        <div class="kpi-row" id="slp-kpis"></div>
+        <div class="charts-row">
+          <div class="chart-card" style="flex:1">
+            <div class="chart-card-hdr"><div class="chart-card-title">Production Progress — All Tenders</div><div class="chart-card-sub">Casted (green) vs Balance to Cast (amber) · Hover bar for details</div></div>
+            <div class="chart-box" style="height:320px"><canvas id="slp-combined"></canvas></div>
+          </div>
+        </div>
+        <div class="charts-row">
+          <div class="chart-card">
+            <div class="chart-card-hdr"><div class="chart-card-title">Production Metrics</div><div class="chart-card-sub">Key quantities · Day plan · Remaining projection</div></div>
+            <div class="chart-box" style="height:260px"><canvas id="slp-stacked"></canvas></div>
+          </div>
+        </div>
+        <div class="table-card">
+          <div class="table-card-hdr">
+            <div class="chart-card-title">Sleepers Production Register</div>
+            <div class="tbl-hdr-right">
+              <span class="tbl-count" id="slp-count"></span>
+              <input class="tbl-search" id="slp-search" placeholder="Search jobs…">
+            </div>
+          </div>
+          <div class="tbl-wrap"><table id="slp-tbl" class="dtable dtable-expand"><thead><tr>
+            <th></th>
+            <th data-col="Tender No">Tender No</th>
+            <th data-col="Site Name">Site</th>
+            <th data-col="Sleeper Type">Sleeper Type</th>
+            <th data-col="_tabStatus">Status</th>
+            <th>Progress</th>
+            <th data-col="Total Tender Qty" class="num">Total Qty</th>
+            <th data-col="Total Qty Casted" class="num">Casted</th>
+          </tr></thead><tbody id="slp-tbody"></tbody></table></div>
+        </div>
+      </section>
+
+      <!-- ─── PAGE 7: VEHICLE FLEET ─── -->
+      <section id="pg-vehicle" class="page-section hidden">
+        <div class="pg-header">
+          <div>
+            <h2 class="pg-title">🚛 Vehicle Fleet</h2>
+            <p class="pg-sub">Previous-day fleet performance · Fuel efficiency &nbsp;·&nbsp; <span class="freshness-tag" id="fresh-vehicle">Checking…</span> &nbsp;·&nbsp; <span class="data-owner">👤 Data: Kusal</span></p>
+          </div>
+          <span class="stale-pill hidden" id="stale-vehicle">⚠ Previous day data</span>
+        </div>
+        <div class="filter-bar">
+          <label>Vehicle:
+            <select id="vehicle-sel" class="filter-sel">
+              <option value="">All Vehicles</option>
+              <option>LY-1350</option><option>LP-6000</option><option>LY-0825</option><option>LY-4623</option>
+              <option>LO-1244</option><option>ZA-7508</option><option>LP-5019</option><option>ZB-1244</option>
+              <option>LI-5153</option><option>LN-8269</option><option>LN-9291</option><option>PA-5203</option>
+              <option>LY-1602</option><option>LI-7143</option>
+            </select>
+          </label>
+        </div>
+        <div class="kpi-row" id="veh-kpis"></div>
+        <div class="charts-row">
+          <div class="chart-card" style="flex:1">
+            <div class="chart-card-hdr"><div class="chart-card-title">Distance by Vehicle</div><div class="chart-card-sub">Total km per vehicle</div></div>
+            <div class="chart-box" style="height:260px"><canvas id="veh-km"></canvas></div>
+          </div>
+          <div class="chart-card" style="flex:1">
+            <div class="chart-card-hdr"><div class="chart-card-title">Fuel Consumption</div><div class="chart-card-sub">Total litres consumed per vehicle</div></div>
+            <div class="chart-box" style="height:260px"><canvas id="veh-fuel"></canvas></div>
+          </div>
+        </div>
+        <div class="charts-row">
+          <div class="chart-card" style="flex:1">
+            <div class="chart-card-hdr"><div class="chart-card-title">Efficiency Scatter</div><div class="chart-card-sub">Distance (km) vs Mileage (km/L)</div></div>
+            <div class="chart-box" style="height:240px"><canvas id="veh-scatter"></canvas></div>
+          </div>
+          <div class="chart-card" style="flex:1">
+            <div class="chart-card-hdr"><div class="chart-card-title">Fleet Fuel Share</div><div class="chart-card-sub">Fuel consumption distribution</div></div>
+            <div class="chart-box" style="height:240px"><canvas id="veh-polar"></canvas></div>
+          </div>
+        </div>
+        <div class="table-card">
+          <div class="table-card-hdr">
+            <div class="chart-card-title">Fleet Activity Log</div>
+            <div class="tbl-hdr-right">
+              <span class="tbl-count" id="veh-count"></span>
+              <input class="tbl-search" id="veh-search" placeholder="Search vehicles…">
+            </div>
+          </div>
+          <div class="tbl-wrap"><table id="veh-tbl" class="dtable dtable-expand"><thead><tr>
+            <th></th>
+            <th data-col="Vehicle Number">Vehicle No</th>
+            <th data-col="Date">Date</th>
+            <th data-col="Total Distance (km)" class="num">Distance (km)</th>
+            <th data-col="Avg Speed (km/h)" class="num">Avg Speed</th>
+            <th data-col="Fuel Mileage (km/l)" class="num">Mileage (km/L)</th>
+            <th data-col="Total Fuel Consumed (L)" class="num">Fuel (L)</th>
+            <th>Status</th>
+          </tr></thead><tbody id="veh-tbody"></tbody></table></div>
+        </div>
+      </section>
+
+      <!-- ─── PAGE 8: FILLING STATION ─── -->
+      <section id="pg-filling" class="page-section hidden">
+        <div class="pg-header">
+          <div>
+            <h2 class="pg-title">⛽ Filling Station</h2>
+            <p class="pg-sub">Previous-day fuel sales · Stock levels · Payment analysis &nbsp;·&nbsp; <span class="freshness-tag" id="fresh-filling">Checking…</span> &nbsp;·&nbsp; <span class="data-owner">👤 Data: Chathura · Disna</span></p>
+          </div>
+          <span class="stale-pill hidden" id="stale-filling">⚠ Previous day data</span>
+        </div>
+        <div class="kpi-row" id="fill-kpis"></div>
+
+        <div class="table-card fuel-tank-card">
+          <div class="chart-card-hdr" style="padding:1rem 1.25rem .75rem">
+            <div class="chart-card-title">Fuel Stock Levels</div>
+            <div class="chart-card-sub">Closing stock by fuel type</div>
+          </div>
+          <div id="fuel-tanks-grid" class="fuel-tanks-grid">
+            <div class="fuel-tank-wrap">
+              <div class="ftank" id="ftank-petrol">
+                <div class="ftank-fill ftank-fill-petrol" id="ffill-petrol"></div>
+                <div class="ftank-label-pct" id="fpct-petrol">—</div>
+                <div class="ftank-ticks">
+                  <div class="ftick" style="bottom:75%"><span>75</span></div>
+                  <div class="ftick" style="bottom:50%"><span>50</span></div>
+                  <div class="ftick" style="bottom:25%"><span>25</span></div>
+                </div>
+              </div>
+              <div class="ftank-label">Petrol</div>
+              <div class="ftank-stock" id="fstock-petrol">— L</div>
+            </div>
+            <div class="fuel-tank-wrap">
+              <div class="ftank" id="ftank-diesel">
+                <div class="ftank-fill ftank-fill-diesel" id="ffill-diesel"></div>
+                <div class="ftank-label-pct" id="fpct-diesel">—</div>
+                <div class="ftank-ticks">
+                  <div class="ftick" style="bottom:75%"><span>75</span></div>
+                  <div class="ftick" style="bottom:50%"><span>50</span></div>
+                  <div class="ftick" style="bottom:25%"><span>25</span></div>
+                </div>
+              </div>
+              <div class="ftank-label">Diesel</div>
+              <div class="ftank-stock" id="fstock-diesel">— L</div>
+            </div>
+            <div class="fuel-tank-wrap">
+              <div class="ftank" id="ftank-euro3">
+                <div class="ftank-fill ftank-fill-euro3" id="ffill-euro3"></div>
+                <div class="ftank-label-pct" id="fpct-euro3">—</div>
+                <div class="ftank-ticks">
+                  <div class="ftick" style="bottom:75%"><span>75</span></div>
+                  <div class="ftick" style="bottom:50%"><span>50</span></div>
+                  <div class="ftick" style="bottom:25%"><span>25</span></div>
+                </div>
+              </div>
+              <div class="ftank-label">Euro 3</div>
+              <div class="ftank-stock" id="fstock-euro3">— L</div>
+            </div>
+            <div class="fuel-tank-wrap">
+              <div class="ftank" id="ftank-extramile">
+                <div class="ftank-fill ftank-fill-em" id="ffill-extramile"></div>
+                <div class="ftank-label-pct" id="fpct-extramile">—</div>
+                <div class="ftank-ticks">
+                  <div class="ftick" style="bottom:75%"><span>75</span></div>
+                  <div class="ftick" style="bottom:50%"><span>50</span></div>
+                  <div class="ftick" style="bottom:25%"><span>25</span></div>
+                </div>
+              </div>
+              <div class="ftank-label">Extra Mile</div>
+              <div class="ftank-stock" id="fstock-extramile">— L</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="charts-row">
+          <div class="chart-card" style="flex:1.2">
+            <div class="chart-card-hdr"><div class="chart-card-title">Revenue by Fuel Type</div><div class="chart-card-sub">Cumulative LKR</div></div>
+            <div class="chart-box" style="height:260px"><canvas id="fill-rev"></canvas></div>
+          </div>
+          <div class="chart-card" style="flex:0.8">
+            <div class="chart-card-hdr"><div class="chart-card-title">Payment Type Breakdown</div><div class="chart-card-sub">Most recent day</div></div>
+            <div class="chart-box" style="height:260px"><canvas id="fill-sales"></canvas></div>
+          </div>
+        </div>
+        <div class="charts-row">
+          <div class="chart-card" style="flex:1">
+            <div class="chart-card-hdr"><div class="chart-card-title">Volume Sold by Type</div><div class="chart-card-sub">Total litres per fuel type</div></div>
+            <div class="chart-box" style="height:240px"><canvas id="fill-vol"></canvas></div>
+          </div>
+          <div class="chart-card" style="flex:1">
+            <div class="chart-card-hdr"><div class="chart-card-title">Credit Receivable Age</div><div class="chart-card-sub">Outstanding credit by age bucket</div></div>
+            <div class="chart-box" style="height:240px"><canvas id="fill-credit"></canvas></div>
+          </div>
+        </div>
+        <div class="table-card">
+          <div class="table-card-hdr">
+            <div class="chart-card-title">Daily Sales Summary</div>
+            <div class="tbl-hdr-right">
+              <span class="tbl-count" id="fill-count"></span>
+              <input class="tbl-search" id="fill-search" placeholder="Search…">
+            </div>
+          </div>
+          <div class="tbl-wrap"><table id="fill-tbl" class="dtable"><thead><tr>
+            <th data-col="Date">Date</th>
+            <th data-col="Petrol Sales (L)" class="num">Petrol (L)</th>
+            <th data-col="Diesel Sales (L)" class="num">Diesel (L)</th>
+            <th data-col="Petrol Sales (LKR)" class="num">Petrol (LKR)</th>
+            <th data-col="Diesel Sales (LKR)" class="num">Diesel (LKR)</th>
+            <th class="num">Total Volume (L)</th>
+            <th class="num">Total Revenue (LKR)</th>
+          </tr></thead><tbody id="fill-tbody"></tbody></table></div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<!-- MOBILE BOTTOM NAV -->
+<nav id="bottom-nav">
+  <a class="bnav-item active" data-page="bank" href="#bank"><span class="bn-ico">🏦</span><span class="bn-lbl">Bank</span></a>
+  <a class="bnav-item" data-page="cash" href="#cash"><span class="bn-ico">💵</span><span class="bn-lbl">Cash</span></a>
+  <a class="bnav-item" data-page="invoices" href="#invoices"><span class="bn-ico">📋</span><span class="bn-lbl">Invoices</span></a>
+  <a class="bnav-item" data-page="finance" href="#finance"><span class="bn-ico">🏛️</span><span class="bn-lbl">Finance</span></a>
+  <a class="bnav-item" data-page="tender" href="#tender"><span class="bn-ico">🏗️</span><span class="bn-lbl">PS Pole</span></a>
+  <a class="bnav-item" data-page="sleepers" href="#sleepers"><span class="bn-ico">🛤️</span><span class="bn-lbl">Sleepers</span></a>
+  <a class="bnav-item" data-page="vehicle" href="#vehicle"><span class="bn-ico">🚛</span><span class="bn-lbl">Fleet</span></a>
+  <a class="bnav-item" data-page="filling" href="#filling"><span class="bn-ico">⛽</span><span class="bn-lbl">Filling</span></a>
+</nav>
+
+<!-- MODAL -->
+<div id="modal-overlay" class="hidden">
+  <div id="modal-box">
+    <button id="modal-close" class="modal-close-btn">✕</button>
+    <div id="modal-content"></div>
+  </div>
+</div>
+
+<div id="toast-wrap"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="app.js"></script>
+
+
+</body>
+</html>
